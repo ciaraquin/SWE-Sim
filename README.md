@@ -1,2 +1,2 @@
-# Educational-Simulation-of-Software-Engineering-Projects
-Capstone project using AI to simulate a software engineering team to allow students to practice task triage and code reviews.
+# EngSim
+EngSim is a project that uses AI to simulate a software engineering team to allow students to practice task triage and code reviews.
