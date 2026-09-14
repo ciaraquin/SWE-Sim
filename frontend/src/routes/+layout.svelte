@@ -17,6 +17,7 @@
 		</a>
 		<nav aria-label="Main navigation">
 			<a href="/">Home</a>
+			<a href="/simulations">Simulations</a>
 			<a href="/about">About</a>
 		</nav>
 	</header>

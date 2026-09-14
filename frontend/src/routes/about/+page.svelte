@@ -8,7 +8,6 @@
 		<p class="lead">SWE Sim was created as a capstone project to provide a realistic simulation for practicing software engineering skills.</p>
 		<br>
         <div class="details">
-        <br>
 			<p>In college, students often learn the theory but not the practice of software engineering. SWE Sim was created to allow students to practice skills that software engineers use on a daily basis, without the need of a large-scale project.</p>
 			<p>SWE Sim uses LLMs to simulate your teammates, allowing you to practice communication and collaboration skills in a realistic environment.</p>
 		</div>
