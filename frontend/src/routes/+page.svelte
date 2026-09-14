@@ -64,13 +64,13 @@
 				<button type="button" onclick={logout}>Sign out</button>
 			</div>
 			<div class="simulations">
-				<div class="simulation-heading">
+				<!-- <div class="simulation-heading">
 					<p class="eyebrow">Your simulations</p>
 					<form onsubmit={(event) => { event.preventDefault(); startSimulation(); }}>
 						<input bind:value={newTitle} aria-label="Simulation title" placeholder="Simulation title" />
 						<button type="submit">Start simulation</button>
 					</form>
-				</div>
+				</div> -->
 				{#if simulationError}<p class="error">{simulationError}</p>{/if}
 				{#if simulations.length}
 					<ul>
@@ -80,7 +80,9 @@
 					</ul>
 				{:else}
 					<p class="empty">No simulations yet.</p>
+
 				{/if}
+				<a class="simulations-link" href="/simulations">Explore simulations <span aria-hidden="true">&#8594;</span></a>
 			</div>
 		{:else}
 		<a class="github-button" href="http://localhost:8000/auth/github">
@@ -88,8 +90,9 @@
 			<span>Sign in with GitHub</span>
 			<span class="arrow" aria-hidden="true">&#8594;</span>
 		</a>
-		{/if}
 		<p class="note">Your GitHub account will be used to save your progress.</p>
+		{/if}
+		
 	</div>
 
 </section>
@@ -145,6 +148,8 @@
 	.github-mark img { width: 100%; height: 100%; object-fit: contain; }
 	.arrow { font-size: 1.2rem; line-height: 0; }
 	.note { margin: 0.85rem 0 0; color: #7b857d; font-family: 'Trebuchet MS', sans-serif; font-size: 0.72rem; }
+	.simulations-link { display: inline-block; margin-top: 2rem; color: #c336a5e2; font-family: 'Trebuchet MS', sans-serif; font-size: 0.8rem; font-weight: 700; text-decoration: none; }
+	.simulations-link:hover, .simulations-link:focus-visible { text-decoration: underline; }
 	.signed-in { display: flex; align-items: center; gap: 1rem; font-family: 'Trebuchet MS', sans-serif; font-size: 0.8rem; }
 	.signed-in p { margin: 0; }
 	button, input { border: 1px solid rgba(32, 42, 37, 0.24); padding: 0.75rem 0.9rem; font: inherit; }

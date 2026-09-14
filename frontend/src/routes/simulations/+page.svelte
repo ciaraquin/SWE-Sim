@@ -17,7 +17,6 @@
 	let authenticated = $state(true);
 	let user = $state<{ login: string; name: string | null } | null>(null);
 	let modalOpen = $state(false);
-	let title = $state('');
 	let description = $state('');
 	let teamSize = $state(3);
 	let difficulty = $state('Intermediate');
@@ -134,7 +133,7 @@
 		<button class="new-simulation" type="button" onclick={() => { modalOpen = true; message = ''; }}>New simulation <span aria-hidden="true">+</span></button>
 		{#if modalOpen}
 			<div class="modal-backdrop" role="presentation" onclick={(event) => { if (event.target === event.currentTarget) modalOpen = false; }}>
-				<section class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+				<dialog open class="modal" aria-labelledby="modal-title">
 					<div class="modal-header">
 						<div><p class="eyebrow">Project setup</p><h2 id="modal-title">Start a simulation</h2></div>
 						<button class="close" type="button" aria-label="Close" onclick={() => modalOpen = false}>×</button>
@@ -159,7 +158,7 @@
 						{#if message}<p class="message">{message}</p>{/if}
 						<button class="submit" type="submit" disabled={saving}>{saving ? 'Creating...' : 'Create simulation'}</button>
 					</form>
-				</section>
+				</dialog>
 			</div>
 		{/if}
 
@@ -193,7 +192,6 @@
 	.intro { max-width: 34rem; margin: 1.5rem 0 3rem; color: #526057; font-size: 1.1rem; line-height: 1.6; }
 	.create-form { padding: 1.25rem 0 2rem; border-bottom: 1px solid rgba(32, 42, 37, 0.2); }
 	.create-form label { display: block; margin-bottom: 0.6rem; color: #647067; font-family: 'Trebuchet MS', sans-serif; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; }
-	.form-row { display: flex; gap: 0.6rem; }
 	input, button { border: 1px solid rgba(32, 42, 37, 0.25); padding: 0.85rem 1rem; font: inherit; }
 	input { min-width: 0; flex: 1; background: #fff9ed; }
 	button { background: #202a25; color: #f5f1e8; cursor: pointer; }
@@ -210,9 +208,11 @@
 	.empty-state { margin-top: 2rem; padding: 2rem 0; border-top: 1px solid rgba(32, 42, 37, 0.16); }
 	.empty-state h2 { margin: 0; font-size: 1.5rem; font-weight: 400; }
 	.empty-state a { display: inline-block; margin-top: 1.5rem; color: #c336a5e2; font-family: 'Trebuchet MS', sans-serif; font-size: 0.8rem; font-weight: 700; text-decoration: none; }
+	.back-link { display: inline-block; margin-top: 3rem; color: #c336a5e2; font-family: 'Trebuchet MS', sans-serif; font-size: 0.8rem; font-weight: 700; text-decoration: none; }
+	.back-link:hover, .back-link:focus-visible { text-decoration: underline; }
 	.message { color: #a33f48; }
 	.modal-backdrop { position: fixed; z-index: 10; inset: 0; display: grid; place-items: center; padding: 1rem; background: rgba(32, 42, 37, 0.45); }
-	.modal { width: min(620px, 100%); max-height: 90vh; overflow-y: auto; padding: 2rem; background: #f5f1e8; box-shadow: 0 1rem 3rem rgba(32, 42, 37, 0.2); }
+	.modal { width: min(620px, 100%); max-height: 90vh; margin: 0; overflow-y: auto; padding: 2rem; border: 0; background: #f5f1e8; box-shadow: 0 1rem 3rem rgba(32, 42, 37, 0.2); }
 	.modal-header { display: flex; justify-content: space-between; gap: 1rem; }
 	.modal-header .eyebrow { margin-bottom: 0.75rem; }
 	.modal h2 { margin: 0; font-size: 2rem; font-weight: 400; }
@@ -226,5 +226,5 @@
 	.field-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 0.5rem; }
 	.field-grid input { width: 100%; }
 	.submit { margin-top: 0.75rem; }
-	@media (max-width: 600px) { .simulations-page { width: min(100% - 2rem, 900px); } .form-row { flex-direction: column; } .simulation-row { align-items: flex-start; flex-direction: column; } }
+	@media (max-width: 600px) { .simulations-page { width: min(100% - 2rem, 900px); } .simulation-row { align-items: flex-start; flex-direction: column; } }
 </style>
