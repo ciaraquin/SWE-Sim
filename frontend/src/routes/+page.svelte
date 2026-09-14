@@ -3,7 +3,7 @@
 	import githubLogo from '$lib/assets/github.png';
     import favicon from '$lib/assets/favicon.png';
 
-	const backendUrl = 'http://127.0.0.1:8000';
+	const backendUrl = 'http://localhost:8000';
 	let user = $state<{ login: string; name: string | null } | null>(null);
 	let simulations = $state<{ simulation_id: string; title: string; status: string }[]>([]);
 	let newTitle = $state('');
@@ -83,7 +83,7 @@
 				{/if}
 			</div>
 		{:else}
-		<a class="github-button" href="http://127.0.0.1:8000/auth/github">
+		<a class="github-button" href="http://localhost:8000/auth/github">
 			<span class="github-mark" aria-hidden="true"><img src={githubLogo} alt="" /></span>
 			<span>Sign in with GitHub</span>
 			<span class="arrow" aria-hidden="true">&#8594;</span>

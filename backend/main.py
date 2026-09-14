@@ -39,7 +39,7 @@ GITHUB_AUTHORIZE_URL = "https://github.com/login/oauth/authorize"
 GITHUB_TOKEN_URL = "https://github.com/login/oauth/access_token"
 GITHUB_USER_URL = "https://api.github.com/user"
 GITHUB_CALLBACK_URL = os.getenv(
-    "GITHUB_CALLBACK_URL", "http://127.0.0.1:8000/auth/github/callback"
+    "GITHUB_CALLBACK_URL", "http://localhost:8000/auth/github/callback"
 )
 APP_SECRET = os.getenv("APP_SECRET", "development-only-change-me")
 FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:5173")
@@ -48,6 +48,9 @@ SESSION_COOKIE = "swe_sim_session"
 
 class SimulationCreate(BaseModel):
     title: str = Field(min_length=1, max_length=120)
+    description: str = Field(default="", max_length=1000)
+    team_size: int = Field(default=3, ge=1, le=10)
+    difficulty: str = Field(default="Intermediate", pattern="^(Beginner|Intermediate|Advanced)$")
 
 
 def create_oauth_state() -> str:
@@ -168,7 +171,16 @@ def authenticated_session(request: Request) -> dict:
 def start_simulation(payload: SimulationCreate, request: Request):
     session = authenticated_session(request)
     try:
-        return create_simulation(session["user"]["github_id"], payload.title.strip())
+        title = payload.title.strip()
+        if not title:
+            raise HTTPException(status_code=422, detail="Title cannot be blank")
+        return create_simulation(
+            session["user"]["github_id"],
+            title,
+            payload.description.strip(),
+            payload.team_size,
+            payload.difficulty,
+        )
     except Exception as error:
         raise HTTPException(status_code=503, detail="Unable to create simulation") from error
 

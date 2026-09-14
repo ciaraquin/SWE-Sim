@@ -67,7 +67,13 @@ def delete_session(session_id: str) -> None:
         database.sessions.delete_one({"session_id": session_id})
 
 
-def create_simulation(github_id: int, title: str) -> dict:
+def create_simulation(
+    github_id: int,
+    title: str,
+    description: str,
+    team_size: int,
+    difficulty: str,
+) -> dict:
     if database is None:
         raise RuntimeError("MONGODB_URI is not configured")
 
@@ -77,6 +83,9 @@ def create_simulation(github_id: int, title: str) -> dict:
         "simulation_id": str(uuid4()),
         "github_id": github_id,
         "title": title,
+        "description": description,
+        "team_size": team_size,
+        "difficulty": difficulty,
         "status": "active",
         "created_at": datetime.now(timezone.utc),
     }

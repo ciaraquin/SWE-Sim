@@ -17,7 +17,7 @@ Use these local URLs:
 
 ```text
 Homepage URL: http://localhost:5173
-Authorization callback URL: http://127.0.0.1:8000/auth/github/callback
+Authorization callback URL: http://localhost:8000/auth/github/callback
 ```
 
 From the project root, create a local environment file:
@@ -32,7 +32,7 @@ ignored by Git.
 ```env
 GITHUB_CLIENT_ID=your_github_oauth_client_id
 GITHUB_CLIENT_SECRET=your_github_oauth_client_secret
-GITHUB_CALLBACK_URL=http://127.0.0.1:8000/auth/github/callback
+GITHUB_CALLBACK_URL=http://localhost:8000/auth/github/callback
 APP_SECRET=replace-with-a-long-random-value
 MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/?appName=SWE-Sim
 MONGODB_DATABASE=swe_sim
