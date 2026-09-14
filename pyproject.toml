@@ -1,0 +1,9 @@
+[project]
+name = "educational-simulation-of-software-engineering-projects"
+version = "0.1.0"
+description = "Simulation of software engineering projects"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "fastapi[standard]>=0.141.1",
+]
