@@ -8,16 +8,18 @@ SWE Sim is a project that uses AI to simulate a software engineering team to all
 - Python 3.10 or newer
 - [uv](https://docs.astral.sh/uv/)
 - [Bun](https://bun.sh/)
-- A GitHub OAuth App for sign-in
+- A GitLab OAuth application for sign-in
 
-### Configure GitHub OAuth
+### Configure GitLab OAuth
 
-Create a GitHub OAuth App under `Settings > Developer settings > OAuth Apps`.
-Use these local URLs:
+Create an OAuth application at
+https://gitlab.scss.tcd.ie/-/profile/applications. Set the redirect URI to the
+callback below and enable the `api` scope (needed to create the practice repo
+and merge request). To use a different GitLab server, such as gitlab.com, set
+`GITLAB_URL` in `.env`.
 
 ```text
-Homepage URL: http://localhost:5173
-Authorization callback URL: http://localhost:8000/auth/github/callback
+Redirect URI: http://localhost:8000/auth/gitlab/callback
 ```
 
 From the project root, create a local environment file:
@@ -30,12 +32,15 @@ Update `.env` with the OAuth App credentials. Keep this file private; it is
 ignored by Git.
 
 ```env
-GITHUB_CLIENT_ID=your_github_oauth_client_id
-GITHUB_CLIENT_SECRET=your_github_oauth_client_secret
-GITHUB_CALLBACK_URL=http://localhost:8000/auth/github/callback
+GITLAB_CLIENT_ID=your_gitlab_application_id
+GITLAB_CLIENT_SECRET=your_gitlab_application_secret
+GITLAB_CALLBACK_URL=http://localhost:8000/auth/gitlab/callback
+GITLAB_URL=https://gitlab.scss.tcd.ie
 APP_SECRET=replace-with-a-long-random-value
 MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/?appName=SWE-Sim
 MONGODB_DATABASE=swe_sim
+OPENAI_API_KEY=your_openai_api_key
+OPENAI_MODEL=gpt-4o-mini
 ```
 
 ### Start the backend
@@ -63,11 +68,11 @@ bun install
 bun run dev
 ```
 
-Open the frontend at http://localhost:5173 and select **Sign in with GitHub**.
+Open the frontend at http://localhost:5173 and select **Sign in with GitLab**.
 
 After signing in, use the simulation form to create a simulation. Simulations
 are saved to the MongoDB `simulations` collection and are associated with the
-authenticated GitHub user.
+authenticated GitLab user.
 
 The simulation API provides:
 
@@ -75,6 +80,28 @@ The simulation API provides:
 POST /simulations   Create a simulation for the signed-in user
 GET  /simulations   List the signed-in user's simulations
 ```
+
+### Run a task with a persona
+
+`backend.task_runner.execute_task` reads persona instructions from a file,
+sends them with a task description to the OpenAI Responses API, and saves the
+generated text to the requested output file. Responses must include an
+`Injected Errors / Deviations` section describing intentional defects and
+other unmet task requirements; responses without that section are rejected.
+
+```python
+from backend.task_runner import execute_task
+
+result = execute_task(
+    task_description="Implement the shopping cart task.",
+    persona_file="context/persona_good.md",
+    output_file="shopping-cart-result.md",
+)
+```
+
+Set `OPENAI_API_KEY` in `.env` before calling the function. `OPENAI_MODEL` is
+optional and defaults to `gpt-4o-mini`. The function returns the generated text
+as well as writing it to the output file.
 
 ### Verify the backend
 

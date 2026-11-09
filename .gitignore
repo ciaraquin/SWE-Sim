@@ -3,3 +3,5 @@
 .venv/
 __pycache__/
 *.py[cod]
+local_db*
+.DS_Store

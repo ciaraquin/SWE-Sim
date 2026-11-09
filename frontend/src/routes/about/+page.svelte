@@ -15,7 +15,7 @@
 	<p class="eyebrow">How SWE Sim works</p>
 	<div class="workbench" aria-label="SWE Sim practice areas">
 		<div class="workbench-label">The Process</div>
-		<div class="practice-item"><span>01</span><strong>Sign in with GitHub</strong><small>Allow SWE Sim to create a repository and save your progress.</small></div>
+		<div class="practice-item"><span>01</span><strong>Sign in with GitLab</strong><small>Use your GitLab account to save your progress.</small></div>
 		<div class="practice-item"><span>02</span><strong>Code Generation</strong><small>LLMs will simulate other developers, committing code.</small></div>
 		<div class="practice-item"><span>03</span><strong>Your Turn</strong><small>You get to practice your skills in a realistic environment. Practice assigning tasks, reviewing code, and collaborating with your simulated team.</small></div>
 	</div><hr><br>

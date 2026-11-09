@@ -8,7 +8,7 @@ from urllib.parse import urlencode
 
 import httpx
 from dotenv import load_dotenv
-from fastapi import FastAPI, HTTPException, Request, Response
+from fastapi import BackgroundTasks, FastAPI, HTTPException, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 from fastapi.responses import RedirectResponse
@@ -24,6 +24,7 @@ from backend.database import (
     list_simulations,
     upsert_user,
 )
+from backend.gitlab_mr import create_practice_mr
 
 app = FastAPI()
 
@@ -35,11 +36,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-GITHUB_AUTHORIZE_URL = "https://github.com/login/oauth/authorize"
-GITHUB_TOKEN_URL = "https://github.com/login/oauth/access_token"
-GITHUB_USER_URL = "https://api.github.com/user"
-GITHUB_CALLBACK_URL = os.getenv(
-    "GITHUB_CALLBACK_URL", "http://localhost:8000/auth/github/callback"
+GITLAB_URL = os.getenv("GITLAB_URL", "https://gitlab.scss.tcd.ie")
+GITLAB_AUTHORIZE_URL = f"{GITLAB_URL}/oauth/authorize"
+GITLAB_TOKEN_URL = f"{GITLAB_URL}/oauth/token"
+GITLAB_USER_URL = f"{GITLAB_URL}/api/v4/user"
+GITLAB_CALLBACK_URL = os.getenv(
+    "GITLAB_CALLBACK_URL", "http://localhost:8000/auth/gitlab/callback"
 )
 APP_SECRET = os.getenv("APP_SECRET", "development-only-change-me")
 FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:5173")
@@ -74,63 +76,71 @@ def is_valid_oauth_state(state: str) -> bool:
         return False
 
 
-@app.get("/auth/github")
-def github_login():
-    client_id = os.getenv("GITHUB_CLIENT_ID")
+@app.get("/auth/gitlab")
+def gitlab_login():
+    client_id = os.getenv("GITLAB_CLIENT_ID")
     if not client_id:
-        return {"error": "GITHUB_CLIENT_ID is not configured"}
+        return {"error": "GITLAB_CLIENT_ID is not configured"}
 
     params = urlencode(
         {
             "client_id": client_id,
-            "redirect_uri": GITHUB_CALLBACK_URL,
-            "scope": "read:user user:email",
+            "redirect_uri": GITLAB_CALLBACK_URL,
+            "response_type": "code",
+            "scope": "api",
             "state": create_oauth_state(),
         }
     )
-    return RedirectResponse(f"{GITHUB_AUTHORIZE_URL}?{params}")
+    return RedirectResponse(f"{GITLAB_AUTHORIZE_URL}?{params}")
 
 
-@app.get("/auth/github/callback")
-async def github_callback(code: str | None = None, state: str | None = None):
+@app.get("/auth/gitlab/callback")
+async def gitlab_callback(
+    background_tasks: BackgroundTasks,
+    code: str | None = None,
+    state: str | None = None,
+):
     if not code or not state or not is_valid_oauth_state(state):
-        return {"error": "Invalid GitHub OAuth callback"}
+        return {"error": "Invalid GitLab OAuth callback"}
 
-    client_id = os.getenv("GITHUB_CLIENT_ID")
-    client_secret = os.getenv("GITHUB_CLIENT_SECRET")
+    client_id = os.getenv("GITLAB_CLIENT_ID")
+    client_secret = os.getenv("GITLAB_CLIENT_SECRET")
     if not client_id or not client_secret:
-        return {"error": "GitHub OAuth credentials are not configured"}
+        return {"error": "GitLab OAuth credentials are not configured"}
 
     async with httpx.AsyncClient() as client:
         token_response = await client.post(
-            GITHUB_TOKEN_URL,
+            GITLAB_TOKEN_URL,
             data={
                 "client_id": client_id,
                 "client_secret": client_secret,
                 "code": code,
-                "redirect_uri": GITHUB_CALLBACK_URL,
+                "redirect_uri": GITLAB_CALLBACK_URL,
+                "grant_type": "authorization_code",
             },
             headers={"Accept": "application/json"},
         )
         token_response.raise_for_status()
         access_token = token_response.json().get("access_token")
         if not access_token:
-            return {"error": "GitHub did not return an access token"}
+            return {"error": "GitLab did not return an access token"}
 
         user_response = await client.get(
-            GITHUB_USER_URL,
+            GITLAB_USER_URL,
             headers={
-                "Accept": "application/vnd.github+json",
                 "Authorization": f"Bearer {access_token}",
             },
         )
         user_response.raise_for_status()
 
-    github_user = user_response.json()
+    gitlab_user = user_response.json()
     try:
-        stored_user = upsert_user(github_user)
+        stored_user = upsert_user(gitlab_user)
     except Exception as error:
         raise HTTPException(status_code=503, detail="Unable to save user") from error
+
+    if not stored_user.get("practice_repo"):
+        background_tasks.add_task(create_practice_mr, access_token, stored_user["gitlab_id"])
 
     session_id = secrets.token_urlsafe(32)
     try:
@@ -175,7 +185,7 @@ def start_simulation(payload: SimulationCreate, request: Request):
         if not title:
             raise HTTPException(status_code=422, detail="Title cannot be blank")
         return create_simulation(
-            session["user"]["github_id"],
+            session["user"]["gitlab_id"],
             title,
             payload.description.strip(),
             payload.team_size,
@@ -189,7 +199,7 @@ def start_simulation(payload: SimulationCreate, request: Request):
 def simulations_for_user(request: Request):
     session = authenticated_session(request)
     try:
-        return {"simulations": list_simulations(session["user"]["github_id"])}
+        return {"simulations": list_simulations(session["user"]["gitlab_id"])}
     except Exception as error:
         raise HTTPException(status_code=503, detail="Unable to load simulations") from error
 

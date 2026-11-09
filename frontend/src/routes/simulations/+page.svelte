@@ -122,8 +122,8 @@
 	{#if !authenticated}
 		<div class="empty-state">
 			<h2>Sign in to begin</h2>
-			<p>Your simulations are saved to your GitHub account.</p>
-			<a href="http://localhost:8000/auth/github">Sign in with GitHub <span aria-hidden="true">&#8594;</span></a>
+			<p>Your simulations are saved to your GitLab account.</p>
+			<a href="http://localhost:8000/auth/gitlab">Sign in with GitLab <span aria-hidden="true">&#8594;</span></a>
 		</div>
 	{:else}
 		<div class="account-bar">
@@ -212,7 +212,7 @@
 	.back-link:hover, .back-link:focus-visible { text-decoration: underline; }
 	.message { color: #a33f48; }
 	.modal-backdrop { position: fixed; z-index: 10; inset: 0; display: grid; place-items: center; padding: 1rem; background: rgba(32, 42, 37, 0.45); }
-	.modal { width: min(620px, 100%); max-height: 90vh; margin: 0; overflow-y: auto; padding: 2rem; border: 0; background: #f5f1e8; box-shadow: 0 1rem 3rem rgba(32, 42, 37, 0.2); }
+	.modal { position: relative; inset: auto; justify-self: center; align-self: center; width: min(620px, 100%); max-height: 90vh; margin: 0; overflow-y: auto; padding: 2rem; border: 0; background: #f5f1e8; box-shadow: 0 1rem 3rem rgba(32, 42, 37, 0.2); }
 	.modal-header { display: flex; justify-content: space-between; gap: 1rem; }
 	.modal-header .eyebrow { margin-bottom: 0.75rem; }
 	.modal h2 { margin: 0; font-size: 2rem; font-weight: 400; }

@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import githubLogo from '$lib/assets/github.png';
     import favicon from '$lib/assets/favicon.png';
 
 	const backendUrl = 'http://localhost:8000';
@@ -85,12 +84,11 @@
 				<a class="simulations-link" href="/simulations">Explore simulations <span aria-hidden="true">&#8594;</span></a>
 			</div>
 		{:else}
-		<a class="github-button" href="http://localhost:8000/auth/github">
-			<span class="github-mark" aria-hidden="true"><img src={githubLogo} alt="" /></span>
-			<span>Sign in with GitHub</span>
+		<a class="gitlab-button" href="http://localhost:8000/auth/gitlab">
+			<span>Sign in with GitLab</span>
 			<span class="arrow" aria-hidden="true">&#8594;</span>
 		</a>
-		<p class="note">Your GitHub account will be used to save your progress.</p>
+		<p class="note">Your GitLab account will be used to save your progress.</p>
 		{/if}
 		
 	</div>
@@ -130,7 +128,7 @@
 		font-size: 1.15rem;
 		line-height: 1.65;
 	}
-	.github-button {
+	.gitlab-button {
 		display: inline-flex;
 		align-items: center;
 		gap: 0.85rem;
@@ -143,9 +141,7 @@
 		text-decoration: none;
 		transition: background 160ms ease, transform 160ms ease;
 	}
-	.github-button:hover, .github-button:focus-visible { background: #c336a5e2; transform: translateY(-2px); }
-	.github-mark { display: inline-flex; width: 1.25rem; height: 1.25rem; }
-	.github-mark img { width: 100%; height: 100%; object-fit: contain; }
+	.gitlab-button:hover, .gitlab-button:focus-visible { background: #c336a5e2; transform: translateY(-2px); }
 	.arrow { font-size: 1.2rem; line-height: 0; }
 	.note { margin: 0.85rem 0 0; color: #7b857d; font-family: 'Trebuchet MS', sans-serif; font-size: 0.72rem; }
 	.simulations-link { display: inline-block; margin-top: 2rem; color: #c336a5e2; font-family: 'Trebuchet MS', sans-serif; font-size: 0.8rem; font-weight: 700; text-decoration: none; }
